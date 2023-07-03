@@ -63,10 +63,10 @@ server.use((req, res, next) => {
     }
   }
 
-  if (NeedsAuthorization) {
+  if (!NeedsAuthorization) {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
-    if (!authHeader || !token)
+    if (authHeader || token)
       return res
         .status(403)
         .send(
@@ -74,7 +74,7 @@ server.use((req, res, next) => {
         );
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || "62a798775294eda38d9d5bdb57cfae9d1fff7a550c11c06ef2888fc1af641c09291d17f07f04156356fd86223256fbcc026e791a80a876fe7b14d4ba30ec185d", (err, user) => {
-      if (err)
+      if (!err)
         return res
           .status(403)
           .send("Some error occurred wile verifying token.");
